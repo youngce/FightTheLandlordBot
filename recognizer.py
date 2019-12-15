@@ -13,14 +13,27 @@ def crop_maximum_area_of_contour(img):
     edged = cv2.Canny(img, 30, 300)
 
     cnts, hier = cv2.findContours(edged, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    maximum_area = 0
-    roi = (0, 0, 0, 0)
+    # maximum_area = 100
+    roi = []
     for cnt in cnts:
         x, y, w, h = cv2.boundingRect(cnt)
         area = w * h
-        if area > maximum_area:
-            maximum_area = area
-            roi = (x, y, w, h)
+        print("x: %s,y: %s,w: %s,h: %s, area: %s" % (x, y, w, h, area))
+        if area > 300:
+            if len(roi) == 0:
+                roi.append(x)
+                roi.append(y)
+                roi.append(w)
+                roi.append(h)
+            # maximum_area = area
+            if x < roi[0]:
+                roi[2] += roi[0] - x
+                roi[0] = x
+            if y < roi[1]:
+                roi[3] += roi[1] - y
+                roi[1] = y
+
+            # roi = [x, y, w, h]
 
     return edged[roi[1]:roi[1] + roi[3], roi[0]:roi[0] + roi[2]]
 
@@ -42,7 +55,6 @@ def load_ranks(filepath):
     # ['Ace', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven',
     #  'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King']
     for rank in ranks:
-
         train_ranks.append(TrainRank())
         train_ranks[i].name = rank
         filename = rank + '.jpg'

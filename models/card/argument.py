@@ -31,5 +31,5 @@ class CornerArgumentFactory:
 
     @staticmethod
     def pool():
-        return CornerArgument(width_margin=20, width=40, shift=-7, height_margin=15, height=110, rank_height=66)
+        return CornerArgument(width_margin=5, width=50, shift=4, height_margin=15, height=110, rank_height=66)
 #     todo left cards

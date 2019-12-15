@@ -25,20 +25,35 @@ class CornerImg:
     def suit_img(self):
         return self.resize(self.img[self.rank_height:self.height, 0:self.width], False)
 
+    def mse(self,imageA, imageB):
+        # the 'Mean Squared Error' between the two images is the
+        # sum of the squared difference between the two images;
+        # NOTE: the two images must have the same dimension
+        err = np.sum((imageA.astype("float") - imageB.astype("float")) ** 2)
+        err /= float(imageA.shape[0] * imageA.shape[1])
+
+        # return the MSE, the lower the error, the more "similar"
+        # the two images are
+        return err
     def isCard(self):
-        cv2.imshow("rank", self.rank_img())
+        # cv2.imshow("rank", self.rank_img())
         cropped = recognizer.crop_maximum_area_of_contour(self.rank_img())
-        cv2.imshow("cropped", cropped)
+        # cv2.imshow("cropped", cropped)
         minimum_rank_diff = 100000
         rank_name = "Unknown"
         for trank in recognizer.tranks:
-            diff_img = cv2.absdiff(cv2.resize(cropped, (trank.img.shape[1], trank.img.shape[0])), trank.img)
-            rank_diff = int(np.sum(diff_img) / 255)
+            # diff_img = cv2.absdiff(cv2.resize(cropped, (trank.img.shape[1], trank.img.shape[0])), trank.img)
 
-            if minimum_rank_diff > rank_diff:
-                minimum_rank_diff = rank_diff
+            mse = self.mse(cv2.resize(cropped, (trank.img.shape[1], trank.img.shape[0])), trank.img)
+                # int(np.sum(np.square(diff_img)) /255)
+            cv2.imshow(trank.name, trank.img)
+            # cv2.waitKey(0)
+            # print(trank.name, mse)
+            if minimum_rank_diff > mse:
+                minimum_rank_diff = mse
                 rank_name = trank.name
-                # cv2.imshow(trank.name, diff_img)
-                # cv2.waitKey(0)
+                # cv2.imshow(trank.name, trank.img)
 
-        print(rank_name,minimum_rank_diff)
+
+        print(rank_name, minimum_rank_diff)
+        cv2.waitKey(0)
