@@ -160,10 +160,10 @@ def load_ranks(filepath):
 # file = "/Users/mark/git/FightTheLandlordBot/test/lordcard.jpg"
 # cornerArg = CornerArgumentFactory.lord_cards()
 
-file = "/Users/mark/git/FightTheLandlordBot/test/pool1.jpg"
-numOfCards = 4
-# file = "/Users/mark/git/FightTheLandlordBot/test/pool2.jpg"
-# numOfCards=2
+# file = "/Users/mark/git/FightTheLandlordBot/test/pool1.jpg"
+# numOfCards = 4
+file = "/Users/mark/git/FightTheLandlordBot/test/pool2.jpg"
+numOfCards=2
 # file = "/Users/mark/git/FightTheLandlordBot/test/pool3.jpg"
 # numOfCards = 10
 cornerArg = CornerArgumentFactory.pool()

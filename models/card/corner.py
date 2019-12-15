@@ -46,7 +46,7 @@ class CornerImg:
 
             mse = self.mse(cv2.resize(cropped, (trank.img.shape[1], trank.img.shape[0])), trank.img)
                 # int(np.sum(np.square(diff_img)) /255)
-            cv2.imshow(trank.name, trank.img)
+            # cv2.imshow(trank.name, trank.img)
             # cv2.waitKey(0)
             # print(trank.name, mse)
             if minimum_rank_diff > mse:
@@ -56,4 +56,4 @@ class CornerImg:
 
 
         print(rank_name, minimum_rank_diff)
-        cv2.waitKey(0)
+        # cv2.waitKey(0)

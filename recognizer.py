@@ -14,28 +14,28 @@ def crop_maximum_area_of_contour(img):
 
     cnts, hier = cv2.findContours(edged, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # maximum_area = 100
-    roi = []
+    # roi = []
+    shape = edged.shape
+    pt1 = (shape[0], shape[1])
+    pt2 = (0, 0)
     for cnt in cnts:
         x, y, w, h = cv2.boundingRect(cnt)
         area = w * h
-        print("x: %s,y: %s,w: %s,h: %s, area: %s" % (x, y, w, h, area))
+
+        # print("x: %s,y: %s,w: %s,h: %s, area: %s" % (x, y, w, h, area))
         if area > 300:
-            if len(roi) == 0:
-                roi.append(x)
-                roi.append(y)
-                roi.append(w)
-                roi.append(h)
-            # maximum_area = area
-            if x < roi[0]:
-                roi[2] += roi[0] - x
-                roi[0] = x
-            if y < roi[1]:
-                roi[3] += roi[1] - y
-                roi[1] = y
+            if x < pt1[0]:
+                pt1 = (x, pt1[1])
+            if y < pt1[1]:
+                pt1 = (pt1[0], y)
+            if x + w > pt2[0]:
+                pt2 = (x + w, pt2[1])
+            if y + h > pt2[1]:
+                pt2 = (pt2[0], y + h)
 
             # roi = [x, y, w, h]
 
-    return edged[roi[1]:roi[1] + roi[3], roi[0]:roi[0] + roi[2]]
+    return edged[pt1[1]:pt2[1], pt1[0]:pt2[0]]
 
 
 def boundingRectArea(cnt):
