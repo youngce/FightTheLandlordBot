@@ -4,6 +4,7 @@ import pytesseract
 from PIL import Image
 from models.card import argument
 from models.card.argument import CornerArgumentFactory
+from models.card.corner import CornerImg
 
 
 class Detector:
@@ -51,29 +52,39 @@ class Detector:
         return list(set(rois))
 
     @staticmethod
-    def find_corner_of_cards(rois_of_cards, arg: argument, num: int) -> list:
+    def find_corner_of_cards(img: np.array, rois_of_cards, arg: argument) -> list:
 
         cornerROIs = []
         for roi in rois_of_cards:
-            for i in range(num):
+
+            for i in range(20):
                 w = arg.width
                 wm = arg.width_margin
                 s = arg.shift
                 h = arg.height
                 hm = arg.height_margin
-                # arg.height_margin
-                # rh = arg.rank_height
-
                 cornerROI = ROI(roi.x - wm * (i - 1) - (w + wm) * i + s, roi.y + hm, w, h)
-                # suitROI = cornerROI.move(0, rh)
+                if cornerROI.crop(img).size == 0 or not CornerImg(cornerROI.crop(img), arg).isCard():
+                    break
+
                 cornerROIs.append(cornerROI)
-                # cv2.rectangle(bgr, cornerROI.pt1(), cornerROI.pt2(), (0, 0, 255), 1)
-                # cv2.rectangle(bgr, suitROI.pt1(), suitROI.pt2(), (0, 255, 0), 1)
+
+            # for i in range(num):
+            #     w = arg.width
+            #     wm = arg.width_margin
+            #     s = arg.shift
+            #     h = arg.height
+            #     hm = arg.height_margin
+            #     # arg.height_margin
+            #     # rh = arg.rank_height
+            #
+            #     cornerROI = ROI(roi.x - wm * (i - 1) - (w + wm) * i + s, roi.y + hm, w, h)
+            #     # suitROI = cornerROI.move(0, rh)
+            #     cornerROIs.append(cornerROI)
+            # cv2.rectangle(bgr, cornerROI.pt1(), cornerROI.pt2(), (0, 0, 255), 1)
+            # cv2.rectangle(bgr, suitROI.pt1(), suitROI.pt2(), (0, 255, 0), 1)
 
         return cornerROIs
-    @staticmethod
-    def __is_corner_of_card():
-
 
 
 # cv2.imshow("test", bgr)
@@ -155,7 +166,6 @@ def load_ranks(filepath):
 
 
 file = "test/ownCards.jpg"
-numOfCards = 17
 # file = "test/ownCards2.jpg"
 # numOfCards = 17
 # file = "test/ownCards3.jpg"
@@ -179,7 +189,11 @@ cornerArg = CornerArgumentFactory.own()
 # cornerArg = CornerArgumentFactory.pool()
 
 img = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
+print(img[0, 0])
+
 bgr = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+
+# cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
 
 rois = Detector.find_rois_of_whole_cards(img)
 c = 100
@@ -187,7 +201,8 @@ for roi in rois:
     cv2.rectangle(bgr, roi.pt1(), roi.pt2(), (c, 0, 0), 2)
     c += 100
 
-cornerROIs = Detector.find_corner_of_cards(rois, cornerArg, numOfCards)
+cornerROIs = Detector.find_corner_of_cards(img, rois, cornerArg)
+
 print("num of card: %s, num of corner: %s" % (len(rois), len(cornerROIs)))
 
 i = 0
@@ -201,12 +216,12 @@ for roi in cornerROIs:
     # cv2.rectangle(bgr, roi.pt1(), roi.pt2(), (255, 0, 0), 1)
     rankROI = ROI(roi.x, roi.y, roi.width, cornerArg.rank_height)
     suitROI = ROI(roi.x, roi.y + cornerArg.rank_height, roi.width, roi.height - cornerArg.rank_height)
-    cv2.rectangle(bgr, rankROI.pt1(), rankROI.pt2(), (0, 0, 255), 1)
-    cv2.rectangle(bgr, suitROI.pt1(), suitROI.pt2(), (0, 255, 0), 1)
+    # cv2.rectangle(bgr, rankROI.pt1(), rankROI.pt2(), (0, 0, 255), 1)
+    # cv2.rectangle(bgr, suitROI.pt1(), suitROI.pt2(), (0, 255, 0), 1)
     centerX = (suitROI.pt1()[0] + suitROI.pt2()[0]) / 2
-    centerY = (suitROI.pt1()[1] + suitROI.pt2()[1]) / 2-10
-    cv2.circle(bgr, (int(centerX), int(centerY)), 1, (255, 0, 0), 2)
-    cv2.circle(bgr, suitROI.pt1(), 1, (255, 0, 0), 1)
+    centerY = (suitROI.pt1()[1] + suitROI.pt2()[1]) / 2 - 10
+    # cv2.circle(bgr, (int(centerX), int(centerY)), 1, (255, 0, 0), 2)
+    # cv2.circle(bgr, suitROI.pt1(), 1, (255, 0, 0), 1)
     # cv2.waitKey(0)
     cornerCropped = roi.crop(img)
 
@@ -229,8 +244,8 @@ for roi in cornerROIs:
     # cv2.imwrite("cards/suit-%i.jpg" % i, suitCropped)
     i += 1
 #
-cv2.imshow("bgr", bgr)
-cv2.waitKey(0)
+# cv2.imshow("bgr", bgr)
+# cv2.waitKey(0)
 
 # edged = cv2.Canny(img, 0, 500)
 # cv2.imshow("edged", edged)

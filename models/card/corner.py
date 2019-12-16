@@ -4,30 +4,24 @@ import cv2
 
 
 class CornerImg:
+    width = 40
+    height = 65
+    rank_height = 40
+
     def __init__(self, img: np.array, arg):
-
-        self.img = img
-        self.width = img.shape[0]
-        self.height = img.shape[1]
-        self.rank_height = arg.rank_height
-
-    def resize(self, img, is_rank: bool = True):
-        # rankCropped = cv2.resize(rankROI.crop(img), (40, 25))
-        #     suitCropped = cv2.resize(suitROI.crop(img),(40,40))
-        size = (40, 25)
-        if not is_rank:
-            size = (40, 40)
-
-        return cv2.resize(img, size)
+        self.img = cv2.resize(img, (40, 65))
+        #
+        # self.width = img.shape[0]
+        # self.height = img.shape[1]
+        # self.rank_height = arg.rank_height
 
     def rank_img(self):
-        return self.resize(self.img[0:self.rank_height, 0:self.width])
+        return self.img[0:self.rank_height, 0:self.width]
 
     def suit_img(self):
         # cv2.imshow("suit",self.img[self.rank_height:self.height, 0:self.width])
         # cv2.waitKey(0)
-        print(self.rank_height,self.height)
-        return self.resize(self.img[self.rank_height:self.height, 0:self.width], False)
+        return self.img[self.rank_height:self.height, 0:self.width]
 
     def mse(self, imageA, imageB):
         # the 'Mean Squared Error' between the two images is the
@@ -40,16 +34,32 @@ class CornerImg:
         # the two images are
         return err
 
-    def isCard(self):
-        suit=self.suit_img()
+    @staticmethod
+    def show(img):
+        cv2.imshow("show", img)
+        cv2.waitKey(0)
 
-        x2,y2= (suit.shape[0]/2,suit.shape[1]/4)
-        if np.any(suit[x2, y2] != 255):
-            print("the pixel is not white")
-        cv2.circle(suit,(0,0),1,(255,0,0),)
-        if np.all(suit[0, 0] == 255):
-            print("the pixel is white")
-        cv2.imshow("suit", self.rank_img())
+    def isCard(self):
+        suit = self.suit_img()
+        x1, y1 = (1, 1)
+        x2, y2 = (int(suit.shape[1] / 2), int((suit.shape[0]) / 3 + 1))
+
+        print(suit[y2, x2], suit[y1, x1])
+        brg = cv2.cvtColor(suit, cv2.COLOR_GRAY2BGR)
+        cv2.circle(brg, (x2, y2), 1, (255, 0, 0), 1)
+        cv2.circle(brg, (1, 1), 1, (255, 0, 0), 1)
+        self.show(brg)
+        return suit[y2, x2] < 100 and suit[y1, x1] > 250
+        #
+        # if np.any() != 255:
+        #     print("the pixel is not white")
+        #
+        # if np.any(suit[1, 1]) == 255:
+        #     print("the pixel is white")
+        # # brg=cv2.cvtColor(suit,cv2.COLOR_GRAY2BGR)
+        # cv2.circle(suit, (x2, y2), 1, (255, 0, 0), 1)
+        # cv2.circle(suit, (1, 1), 1, (255, 0, 0), 1)
+        # self.show(suit)
         # cropped = recognizer.crop_maximum_area_of_contour(self.rank_img())
         # # cv2.imshow("cropped", cropped)
         # minimum_rank_diff = 100000

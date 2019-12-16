@@ -24,3 +24,4 @@ class CardArea(Area):
 
     def detect(self):
         pass
+
