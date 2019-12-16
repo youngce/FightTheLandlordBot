@@ -77,4 +77,4 @@ def load_ranks(filepath):
     return train_ranks
 
 
-tranks = load_ranks("./cards/")
+tranks = load_ranks("cards/")

@@ -71,6 +71,9 @@ class Detector:
                 # cv2.rectangle(bgr, suitROI.pt1(), suitROI.pt2(), (0, 255, 0), 1)
 
         return cornerROIs
+    @staticmethod
+    def __is_corner_of_card():
+
 
 
 # cv2.imshow("test", bgr)
@@ -151,22 +154,29 @@ def load_ranks(filepath):
     return train_ranks
 
 
-# file = "/Users/mark/git/FightTheLandlordBot/test/ownCards.jpg"
-# file = "/Users/mark/git/FightTheLandlordBot/test/ownCards2.jpg"
-# file = "/Users/mark/git/FightTheLandlordBot/test/ownCards3.jpg"
-# cornerArg = CornerArgumentFactory.own()
-# file = "/Users/mark/git/FightTheLandlordBot/test/leftcards.jpg"
+file = "test/ownCards.jpg"
+numOfCards = 17
+# file = "test/ownCards2.jpg"
+# numOfCards = 17
+# file = "test/ownCards3.jpg"
+# numOfCards = 4
+cornerArg = CornerArgumentFactory.own()
 
-# file = "/Users/mark/git/FightTheLandlordBot/test/lordcard.jpg"
+# file = "test/leftcards.jpg"
+
+# file = "test/lordcard.jpg"
+# numOfCards = 3
 # cornerArg = CornerArgumentFactory.lord_cards()
 
-# file = "/Users/mark/git/FightTheLandlordBot/test/pool1.jpg"
+# file = "test/pool1.jpg"
 # numOfCards = 4
-file = "/Users/mark/git/FightTheLandlordBot/test/pool2.jpg"
-numOfCards=2
-# file = "/Users/mark/git/FightTheLandlordBot/test/pool3.jpg"
+# file = "test/pool2.jpg"
+# numOfCards=2
+# file = "test/pool3.jpg"
 # numOfCards = 10
-cornerArg = CornerArgumentFactory.pool()
+# file = "test/pool4.jpg"
+# numOfCards = 1
+# cornerArg = CornerArgumentFactory.pool()
 
 img = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
 bgr = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
@@ -180,7 +190,6 @@ for roi in rois:
 cornerROIs = Detector.find_corner_of_cards(rois, cornerArg, numOfCards)
 print("num of card: %s, num of corner: %s" % (len(rois), len(cornerROIs)))
 
-# cv2.imshow("src1", bgr)
 i = 0
 from models.card.corner import CornerImg
 
@@ -194,7 +203,11 @@ for roi in cornerROIs:
     suitROI = ROI(roi.x, roi.y + cornerArg.rank_height, roi.width, roi.height - cornerArg.rank_height)
     cv2.rectangle(bgr, rankROI.pt1(), rankROI.pt2(), (0, 0, 255), 1)
     cv2.rectangle(bgr, suitROI.pt1(), suitROI.pt2(), (0, 255, 0), 1)
-
+    centerX = (suitROI.pt1()[0] + suitROI.pt2()[0]) / 2
+    centerY = (suitROI.pt1()[1] + suitROI.pt2()[1]) / 2-10
+    cv2.circle(bgr, (int(centerX), int(centerY)), 1, (255, 0, 0), 2)
+    cv2.circle(bgr, suitROI.pt1(), 1, (255, 0, 0), 1)
+    # cv2.waitKey(0)
     cornerCropped = roi.crop(img)
 
     ci = CornerImg(cornerCropped, cornerArg)
