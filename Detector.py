@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 import pytesseract
 from PIL import Image
+
+from area import ROI
 from models.card import argument
 from models.card.argument import CornerArgumentFactory
 from models.card.corner import CornerImg
@@ -89,47 +91,6 @@ class Detector:
 
 # cv2.imshow("test", bgr)
 # cv2.waitKey(0)
-
-
-class ROI:
-    def __init__(self, x, y, width, height):
-        self.x: int = int(x)
-        self.y: int = int(y)
-        self.width: int = int(width)
-        self.height: int = int(height)
-
-    def ys(self) -> list:
-        return [self.y, (self.y + self.height)]
-
-    def xs(self) -> list:
-        return [self.x, self.x + self.width]
-
-    def __eq__(self, other):
-        """Overrides the default implementation"""
-        if isinstance(other, ROI):
-            return self.__hash__() == other.__hash__()
-        return False
-
-    def __hash__(self):
-        return hash((self.x, self.y, self.width, self.height))
-
-    # def range_of_y(self):
-    #     return range(self.y, self.y + self.height)
-    #
-    # def range_of_x(self):
-    #     return range(self.x, self.x + self.width)
-
-    def crop(self, img):
-        return img[self.y:self.y + self.height, self.x:self.x + self.width]
-
-    def pt1(self):
-        return self.x, self.y
-
-    def pt2(self):
-        return self.x + self.width, self.y + self.height
-
-    def move(self, x: int, y: int) -> 'ROI':
-        return ROI(self.x + x, self.y + y, self.width, self.height)
 
 
 class Train_ranks:
