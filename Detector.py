@@ -189,21 +189,32 @@ file = "test/pool4.jpg"
 # numOfCards = 1
 # cornerArg = CornerArgumentFactory.pool()
 
-img = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
-ret, thresh = cv2.threshold(img, 127, 255, 0)
-cv2.imshow("thresh", thresh)
-bgr = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
-cnts, hie = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-cntsSorted = sorted(cnts, key=lambda cnt: cv2.contourArea(cnt))
-for cnt in cntsSorted:
-    peri = cv2.arcLength(cnt, True)
-    approx = cv2.approxPolyDP(cnt, 0.01 * peri, True)
-    area = cv2.contourArea(cnt)
-    if len(approx) == 4 and 9400 < area < 500000:
-        print(area)
-        cv2.drawContours(bgr, [cnt], -1, (255, 0, 0), 3)
-cv2.imshow("img", bgr)
-cv2.waitKey(0)
+# img = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
+# ret, thresh = cv2.threshold(img, 127, 255, 0)
+# cv2.imshow("thresh", thresh)
+# bgr = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+# cnts, hie = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+# cntsSorted = sorted(cnts, key=lambda cnt: cv2.contourArea(cnt))
+# for cnt in cntsSorted:
+#     peri = cv2.arcLength(cnt, True)
+#     approx = cv2.approxPolyDP(cnt, 0.01 * peri, True)
+#     area = cv2.contourArea(cnt)
+#     if len(approx) == 4 and 9400 < area < 500000:
+#         print(area)
+#         cv2.drawContours(bgr, [cnt], -1, (255, 0, 0), 3)
+# cv2.imshow("img", bgr)
+# cv2.waitKey(0)
+
+# bgr = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+
+# ratio = 0.4
+# w = int(img.shape[1] * ratio)
+# h = int(img.shape[0] * ratio)
+# print(w, h)
+# cv2.resize(img, (w, h))
+# cv2.imshow("img", cv2.resize(img, (w, h)))
+# cv2.waitKey(0)
+
 
 # # cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
 #
